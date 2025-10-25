@@ -5,21 +5,24 @@ require('dotenv').config();
 
 const app = express();
 
-// Allow requests from your GitHub Pages frontend
+// ✅ Allow requests from GitHub Pages (all subpaths)
 app.use(cors({
-  origin: 'https://nesimi09.github.io',
+  origin: /^https:\/\/nesimi09\.github\.io/,
 }));
+
+// ✅ Handle CORS preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 
-// Root route to check server
+// ✅ Root route to check server
 app.get('/', (req, res) => res.send('Server is alive!'));
 
-// Get env variables
+// ✅ Get env variables
 const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
-// Nodemailer transporter only if env vars exist
+// ✅ Nodemailer transporter only if env vars exist
 let transporter;
 if (EMAIL_USER && EMAIL_PASSWORD) {
   transporter = nodemailer.createTransport({
@@ -31,7 +34,7 @@ if (EMAIL_USER && EMAIL_PASSWORD) {
   console.warn('⚠️ EMAIL_USER or EMAIL_PASSWORD is missing. Emails will not be sent.');
 }
 
-// Contact form route
+// ✅ Contact form route
 app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
 
@@ -67,7 +70,7 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// Use Railway's dynamic port
+// ✅ Use Railway's dynamic port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
