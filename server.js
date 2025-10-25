@@ -4,9 +4,20 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// ✅ Allow requests from your GitHub Pages frontend
+app.use(cors({
+  origin: 'https://nesimi09.github.io',
+}));
+
 app.use(express.json());
 
+// ✅ Root route to check server is alive
+app.get('/', (req, res) => {
+  res.send('Server is alive!');
+});
+
+// ✅ Nodemailer transporter using Gmail App Password
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -15,6 +26,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// ✅ Contact form endpoint
 app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
 
